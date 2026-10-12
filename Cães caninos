@@ -1,0 +1,100 @@
+
+-- CAOS CANINOS | DOG PANEL
+-- Menu visual para testes no Roblox
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "CaosCaninosPanel"
+gui.ResetOnSpawn = false
+
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 300, 0, 340)
+main.Position = UDim2.new(0.5, -150, 0.5, -170)
+main.BackgroundColor3 = Color3.fromRGB(20, 20, 27)
+main.Parent = gui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = main
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 45)
+title.BackgroundColor3 = Color3.fromRGB(100, 45, 180)
+title.Text = "🐺 CAOS CANINOS"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextSize = 19
+title.Font = Enum.Font.GothamBold
+title.Parent = main
+
+local function createButton(text, y, callback)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, -24, 0, 40)
+    button.Position = UDim2.new(0, 12, 0, y)
+    button.BackgroundColor3 = Color3.fromRGB(45, 42, 58)
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.TextSize = 14
+    button.Font = Enum.Font.Gotham
+    button.Text = text
+    button.Parent = main
+
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, 8)
+    c.Parent = button
+
+    button.MouseButton1Click:Connect(callback)
+    return button
+end
+
+local function notify(message)
+    print("[Caos Caninos] " .. message)
+end
+
+local farm = false
+local aura = false
+
+createButton("Auto Farm: OFF", 60, function()
+    farm = not farm
+    notify("Auto Farm: " .. (farm and "ON" or "OFF"))
+end)
+
+createButton("Kill Aura: OFF", 110, function()
+    aura = not aura
+    notify("Kill Aura: " .. (aura and "ON" or "OFF"))
+end)
+
+createButton("Atualizar jogadores", 160, function()
+    for _, p in ipairs(Players:GetPlayers()) do
+        print(p.Name, p.DisplayName)
+    end
+    notify("Lista de jogadores impressa no console.")
+end)
+
+local input = Instance.new("TextBox")
+input.Size = UDim2.new(1, -24, 0, 38)
+input.Position = UDim2.new(0, 12, 0, 210)
+input.PlaceholderText = "Nome do jogador..."
+input.Text = ""
+input.TextSize = 14
+input.Font = Enum.Font.Gotham
+input.BackgroundColor3 = Color3.fromRGB(40, 38, 49)
+input.TextColor3 = Color3.new(1, 1, 1)
+input.Parent = main
+
+createButton("Selecionar jogador", 258, function()
+    local target = input.Text:lower()
+
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= player and
+           (p.Name:lower() == target or
+            p.DisplayName:lower() == target) then
+            notify("Jogador selecionado: " .. p.Name)
+            return
+        end
+    end
+
+    notify("Jogador não encontrado.")
+end)
+
+gui.Parent = player:WaitForChild("PlayerGui")
